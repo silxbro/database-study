@@ -109,7 +109,7 @@ SQL> create table t
   3  select * from all_objects
   4  order by object_id;  → 테이블 레코드가 object_id 순으로 입력되도록 함
 
-SQL> create index t_object_id_idx on t(object_id)l
+SQL> create index t_object_id_idx on t(object_id);
 
 SQL> create index t_object_name_idx on t(object_name);
 ```
@@ -176,7 +176,7 @@ t 테이블을 생성하면서 object_id 순으로 정렬했고, 이 컬럼에 �
 >
 > 하지만 논리적 I/O가 100% 물리적 I/O를 수반한다는 가정은 매우 비현실적이다. 특히, 앞서 읽었던 테이블 블록을 다시 읽을 때 실제로는 캐싱된 블록을 읽을 가능성이 훨씬 높다.
 >
-> 한번 읽었던 테이블 블록이 버퍼 캐시에서 밀려나지 않도록 충분한 버퍼 캐시를 확보한 상태에서 인덱스를 통해 전체 테블 레코드를 읽는 경우를 가정해 보자.
+> 한번 읽었던 테이블 블록이 버퍼 캐시에서 밀려나지 않도록 충분한 버퍼 캐시를 확보한 상태에서 인덱스를 통해 전체 테이블 레코드를 읽는 경우를 가정해 보자.
 > 그러면 위에서 본 t_object_name_idx 인덱스의 clustering_factor 수치(24,936)는 실제 발생할 수 있는 물리적 I/O 횟수와 전혀 동떨어진 값이 되고 만다.
 > 물리적으로 읽어야 할 전체 테이블 블록 개수는 고정(앞선 예에서는 709개)돼 있기 때문이다.
 > 그럼에도 캐싱 효과를 예측하기가 매우 어렵기 때문에 옵티마이저는 CF를 통해 계산된 논리적 I/O 횟수를 그대로 물리적 I/O 횟수로 인정하고 인덱스 비용을 평가하는 것이다.
