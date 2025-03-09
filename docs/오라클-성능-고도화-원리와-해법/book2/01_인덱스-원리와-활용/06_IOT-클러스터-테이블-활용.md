@@ -329,7 +329,7 @@ INDEX_NAME                PCT_DIRECT_ACCESS
 T1_X1                                    64
 ```
 
-physical guess를 갱신했지만 통계정보 상으로 pct_direct_access는 여전히 64%다. 이 상태에서 실제 Direct 액세스 성공률은 100%이곘지만 여전히 physical guess는 활용되지 않는다.
+physical guess를 갱신했지만 통계정보 상으로 pct_direct_access는 여전히 64%다. 이 상태에서 실제 Direct 액세스 성공률은 100%이겠지만 여전히 physical guess는 활용되지 않는다.
 ```
 SQL> exec dbms_stats.gather_index_stats(user, 't1_x1');
 
@@ -705,7 +705,7 @@ SQL> select empno, ename, dbms_rowid.rowid_block_number(rowid) block_no
 ```
 
 위 테스트 결과를 통해, 같은 블록 내에 공간이 있다면 (최대 클러스터 키 개수를 초과하지 않는 범위 내에서) 계속 그곳에 저장하고, 그 블록마저 차면 새로운 블록을 할당해서 계속 저장한다는 사실을 알 수 있다.
-SIZE 옵션은 공간을 미리 예약해 두는 것일 뿐 그 크기를 초과했다고 값을 저장하지 못하도로고 하지는 않는다는 것이다.
+SIZE 옵션은 공간을 미리 예약해 두는 것일 뿐 그 크기를 초과했다고 값을 저장하지 못하도록 하지는 않는다는 것이다.
 
 SIZE 옵션 때문에 데이터 입력이 방해 받지는 않지만 대부분 클러스터 키 값이 한 블록을 초과한다면 굳이 이 옵션을 두어 클러스터 체인이 발생하도록 할 이유는 없다.
 조금 전처럼 같은 값이 한꺼번에 입력된다면 클러스터 체인을 최소화할 수 있지만 그것은 운이 좋았을 뿐이다.
@@ -796,7 +796,7 @@ Rows   Row Source Operation
 select a.카드번호, a.고객id, a.고객명, a.발급일자
      , a.성별, a.생년월일, a.결혼기념일, a.핸드폰번호, a.전화번호
      , a.우편번호, a.우편번호주소, a.상세주소
-     , a.최종구매일자, a.구매횟수, a.구매금액 구매금액1, x.구매금액 구매금액2
+     , a.최종구매일자, a.구매횟수, a.구매금액 구매금액1, x.구매금액 구매금액2
      , a.누적포인트, a.실사용가능포인트
 from  (select x.고객id, x.관리지점, sum(구매금액) 구매금액
        from   고객별품목별구매내역 x
