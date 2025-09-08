@@ -20,6 +20,25 @@ MySQL 서버가 오라클 RDBMS와 경쟁하지 않아도 사용될 곳이 무�
 - 성능과 기능
 - 커뮤니티나 인지도
 
+DBMS의 안정성은 더 설명이 필요 없는 기준일 것이다. 때로는 성능이나 기능을 안정성보다 중요시하는 경우가 있다. 주로 새로운 시도를 좋아하는 개발자들일 가능성이 높다.
+하지만 DBMS의 안정성 문제로 밤잠을 설쳐 본 개발자라면 말이 달라질 것이다. 성능이나 기능은 돈이나 노력으로 해결되지만 안정성은 그렇지 않다.
+안정성 다음으로 성능과 기능을 고려해보고, 그다음으로는 커뮤니티나 인지도도 함께 고려해보라. 커뮤니티나 인지도가 적은 DBMS는 필요한 경험이나 지식을 구하기 어렵다.
+그런데 더 큰 문제는 DBMS를 관리할 전문가를 구하기 어렵다는 것이다.
+
+다음 차트는 DB-Engines.com(https://db-engines.com/en/ranking) 에서 제공하는 2021년 7월 DBMS 서버의 랭킹이다.
+
+#### [그림 1.1] 2021년 7월의 DBMS 랭킹
+
+<img src="https://github.com/user-attachments/assets/9de71677-1572-4fc1-8fa4-5727d816f724" width="650"/><br/>
+
+DB-Engines.com에서 이 순위를 만들기 위해서 점수를 부여할 때 사용하는 대표적인 기준은 다음과 같다.
+
+- 웹 사이트 언급 횟수(website mentions)
+- 검색 빈도(search frequency)
+- 기술 토론 빈도(technical discussion frequency)
+- DBMS별 구인(current job offers)
+- 전문가 인맥(professional network profiles)
+
 DBMS 선택에서 중요한 요소인 안정성과 성능, 그리고 기능은 DB-Engines의 점수 부여 기준이 아니다.
 DB-Engines.com에서 점수 사용 기준은 DBMS별 활용도에 집중하고 있는데, 결국 이런 활용도의 중심에는 DBMS의 안정성과 기능, 그리고 성능이 모두 포함돼 있기 때문일 것이다.
 안정성이나 기능, 성능에 문제가 있음에도 불구하고 그런 DBMS를 억지로 사용하는 경우는 많지 않을 것이며, 또한 그런 DBMS에 대해 사용자의 활동이 많을 가능성은 매우 낮다.
