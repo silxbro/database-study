@@ -20,15 +20,15 @@ SELECT * FROM departments WHERE dept_no="d001";
 ```
 
 또한 SQL 표준에서는 문자열 값에 홑따옴표가 포함돼 있을 때 홑따옴표를 두 번 연속해서 입력하면 된다. 하지만 MySQL에서는 쌍따옴표와 홑따옴표를 혼합해서 이러한 문제를 피해 가기도 한다.
-마찬가지로 문자열 값이 쌍따옴표를 가지고 있을 때는 쌍따옴표를 두 번 연속해서 사용할 수 있다. 다음 예제 모두 MySQL에서 아무 문제없이 사용할 수 있는 문자열 표기 방법이다.
-첫 번째와 두 번째 쿼리의 문자열 표기법은 SQL 표준이지만, 세 번째와 네 번째 표기법은 MySQL에서만 지원되는 방식이다.
-(이 내용은 sql_mode 시스템 변수에 ANSI_QUOTES 모드가 활성화돼 있다면 달라질 수 있으니 현재 사용 중인 MySQL 서버의 ANSI_QUOTES 모드가 활성화돼 있는지 여부를 확인하자.)
+마찬가지로 문자열 값이 쌍따옴표를 가지고 있을 때는 쌍따옴표를 두 번 연속해서 사용할 수 있다. 다음 에제 모두 MySQL에서 아무 문제없이 사용할 수 있는 문자열 표기 방법이다.
+첫 번째와 두 번째 쿼리의 문자열 표기법은 SQL 표준이지만, 세 번째와 네 번째 표기법은 MySQL에서만 지원되는 방식이다.(이 내용은 sql_mode 시스템 변수에 ANSI_QUOTES 모드가 활성화돼 있다면 달라질
+수 있으니 현재 사용 중인 MySQL 서버의 ANSI_QUOTES 모드가 활성화돼 있는지 여부를 확인하자.)
 
 ```
-mysql> SELECT * FROM departments WHERE dept_no='d''001';
-mysql> SELECT * FROM departments WHERE dept_no='d"001';
-mysql> SELECT * FROM departments WHERE dept_no="d'001";
-mysql> SELECT * FROM departments WHERE dept_no="d""001";
+SELECT * FROM departments WHERE dept_no='d''001';
+SELECT * FROM departments WHERE dept_no='d"001';
+SELECT * FROM departments WHERE dept_no="d'001';
+SELECT * FROM departments WHERE dept_no="d""001";
 ```
 
 SQL에서 사용되는 식별자(테이블명이나 칼럼명 등)가 키워드와 충돌할 때 오라클이나 PostgreSQL에서는 쌍따옴표나 대괄호로 감싸서 충돌을 피한다.
@@ -68,7 +68,8 @@ SELECT * FROM tab_test WHERE string_column=10001;
 MySQL은 숫자 타입과 문자열 타입 간의 비교에서 숫자 타입을 우선시하므로 문자열 값을 숫자 값으로 변환한 후 비교를 수행한다.
 
 첫 번째 쿼리는 주어진 상숫값을 숫자로 변환하는데, 이때는 상숫값 하나만 변환하므로 성능과 관련된 문제가 발생하지 않는다. 두 번째 쿼리는 주어진 상숫값이 숫자 값인데, 비교되는 칼럼은 문자열 칼럼이다.
-이때 MySQL은 문자열 칼럼을 숫자로 변환해서 비교한다. 즉, string_column 칼럼의 모든 문자열 값을 숫자로 변환해서 비교를 수행해야 하므로 string_column에 인덱스가 있더라도 이를 이용하지 못한다.
+이때 MySQL은 문자열 칼럼을 숫자로 변환해서 비교한다.
+즉, string_column 칼럼의 모든 문자열 값을 숫자로 변환해서 비교를 수행해야 하므로 string_column에 인덱스가 있더라도 이를 이용하지 못한다.
 string_column에 알파벳과 같은 문자가 포함된 경우에는 숫자 값으로 변환할 수 없으므로 쿼리 자체가 실패할 수도 있다.
 
 원천적으로 이러한 문제점을 제거하려면 숫자 값은 숫자 타입의 칼럼에만 저장해야 한다.
@@ -123,7 +124,7 @@ mysql> SELECT * FROM tb_boolean WHERE bool_value IN (FALSE, TRUE);
 <br/>
 ## (2) MySQL 연산자
 
-### [1] 동등(Equal) 비교(=,<=>)
+### [1] 동등(Equal) 비교(=, <=>)
 동등 비교는 다른 DBMS에서와 마찬가지로 "=" 기호를 사용해 비교를 수행하면 된다. 하지만 MySQL에서는 동등 비교를 위해 "<=>" 연산자도 제공한다.
 "<=>" 연산자는 "=" 연산자와 같으며, 부가적으로 NULL 값에 대한 비교까지 수행한다. MySQL에서는 이 연산자를 NULL-Safe 비교 연산자라고 하는데, "=" 연산자와 "<=>"의 차이를 예제로 살펴보자.
 
@@ -143,11 +144,11 @@ mysql> SELECT 1 <=> 1, NULL <=> NULL, 1 <=> NULL;
 +---------+---------------+------------+
 ```
 
-위 예제 결과에서도 알 수 있듯이 NULL은 "IS NULL" 연산자 이외에는 비교할 방법이 없다. 그래서 첫 번째 쿼리에서 한쪽이 NULL이면 비교 결과도 NULL로 반환된다.
+위 예제 결과에서도 알 수 있듯이 NULL은 "IS NULL" 연산자 이외에는 비교할 방법이 없다. 그래서 첫 번째 쿼리에서 한쪽이 NULL이면 비교 결과도 NULL로 반환한다.
 하지만 Null-Safe 비교 연산자를 이용해 비교한 결과를 보면 양쪽 비교 대상 모두 NULL이라면 TRUE를 반환하고, 한쪽만 NULL이라면 FALSE를 반환한다.
 즉, "<=>" 연산자는 NULL을 하나의 값으로 인식하고 비교하는 방법이라고 볼 수 있다.
 
-### [2] 부정(Not-Equal) 비교(<>,!=)
+### [2] 부정(Not-Equal) 비교(<>, !=)
 "같지 않다" 비교를 위한 연산자는 "<>"를 일반적으로 많이 사용한다. 이와 함께 C/C++의 연산자인 "!="도 Not-Equal 연산자로 사용할 수 있다.
 어느 쪽을 사용하든 특별히 문제가 되지는 않겠지만 하나의 SQL 문장에서 "<>"와 "!="가 혼용되면 가독성이 떨어지므로 통일해서 사용하는 방법을 권장한다.
 
@@ -184,14 +185,14 @@ mysql> SELECT NOT (1=1);
 ```
 
 ### [4] AND(&&)와 OR(||) 연산자
-일반적으로 DBMS에서는 불리언 표현식의 결과를 결합하기 위해 AND나 OR를 사용한다. MySQL에서는 AND와 OR뿐마나 아니라 "&&"와 "||"의 사용도 허용한다.
+일반적으로 DBMS에서는 불리언 표현식의 결과를 결합하기 위해 AND나 OR를 사용한다. MySQL에서는 AND와 OR뿐만 아니라 "&&"와 "||"의 사용도 허용한다.
 "&&"는 AND 연산자와 같으며, "||"는 OR 연산자와 같다. 오라클에서는 "||"를 불리언 표현식의 결합 연산자가 아니라 문자열을 결합하는 연산자로 사용한다.
-오라클에서 운영되던 애플리케이션을 MySQL로 이관한다거나 문자열 결합 연산에 "||"를 사용하고 싶을 수도 있다. 이떄는 sql_mode 시스템 변숫값에 PIPE_AS_CONCAT을 설정하면 된다.
+오라클에서 운영되던 애플리케이션을 MySQL로 이관한다거나 문자열 결합 연산에 "||"를 사용하고 싶을 수도 있다. 이때는 sql_mode 시스템 변숫값에 PIPE_AS_CONCAT을 설정하면 된다.
 물론 이 설정이 활성화되면 불리언 표현식을 결합할 때 "&&" 연산자는 사용할 수 있지만 "||" 연산자는 사용할 수 없다.
 SQL의 가독성을 높이기 위해 다른 용도로 사용될 수 있는 "&&" 연산자와 "||" 연산자는 사용을 자제하는 것이 좋다.
 
 ```
-mysql> SET sql_mode='PIPES_AS_CONCAT';
+mysql> SET sql_mode='PIPE_AS_CONCAT';
 
 mysql> SELECT 'abc' || 'def' AS concated_string;
 +-----------------+
@@ -226,7 +227,7 @@ mysql> SELECT 'abc' || 'def' AS concated_string;
 > +---------------------------+
 > ```
 >
-> 첫 번째 예제는 OR와 AND 연산자를 그냥 나열했는데, 결과를 보면 TRUE(1)가 표시됐다. 이를 통해 OR와 AND 연산자 중에서 순서와 관계없이 AND 연산자를 먼저 처리했다는 것을 알 수 있다.
+> 첫 번째 예제는 OR과 AND 연산자를 그냥 나열했는데, 결과를 보면 TRUE(1)가 표시됐다. 이를 통해 OR와 AND 연산자 중에서 순서와 관계없이 AND 연산자를 먼저 처리했다는 것을 알 수 있다.
 > 즉, 첫 번째 쿼리는 두 번째 쿼리와 같이 AND 연산을 괄호로 묶은 경우와 동일하다. 세 번째 예제는 OR 연산자를 먼저 처리한 경우인데, 이 경우는 결괏값으로 FALSE(0)가 표시됐다.
 
 ### [5] 나누기(/, DIV)와 나머지(%, MOD) 연산자
@@ -254,7 +255,7 @@ mysql> SELECT 29 MOD 9;
 |       2 |
 +---------+
 
-mysql> SELECT 29 % 9;
+mysql> SELECT  29 % 9;
 +--------+
 |      2 |
 +--------+
@@ -262,7 +263,7 @@ mysql> SELECT 29 % 9;
 
 ### [6] REGEXP 연산자
 문자열 값이 어떤 패턴을 만족하는지 확인하는 연산자이며, RLIKE는 REGEXP와 똑같은 비교를 수행하는 연산자다.
-RLIKE는 가끔 문자열 값이 오른쪽 일치용 LIKE 연산자(Right LIKE)로 혼동할 때가 있는데, MySQL의 RLIKE는 정규 표현식(Regular expression)을 비교하는 연산자라는 점을 기억하자.
+RLIKE는 가끔 문자열 값의 오른쪽 일치용 LIKE 연산자(Right LIKE)로 혼동할 때가 있는데, MySQL의 RLIKE는 정규 표현식(Regular expression)을 비교하는 연산자라는 점을 기억하자.
 REGEXP 연산자를 사용하려면 다음 예제와 같이 REGEXP 연산자의 좌측에 비교 대상 문자열 값 또는 문자열 칼럼을, 우측에 검증하고자 하는 정규 표현식을 사용하면 된다.
 
 다음 예제는 "abc"라는 문자열 값이 'x','y','z' 문자로 시작하는지 검증하는 표현식의 예다.
@@ -274,18 +275,20 @@ mysql> SELECT 'abc' REGEXP '^[x-z]';
 +-----------------------+
 ```
 
+정규 표현식은 자바 또는 자바스크립트와 같은 언어에서 많이 사용되기 때문에 정규 표현식 자체에 대한 자세한 소개는 생략한다.
 REGEXP 연산자의 정규 표현식은 POSIX 표준으로 구현돼 있어서 POSIX 정규 표현식에서 사용하는 패턴 키워드를 그대로 사용할 수 있다.
-여기서는 대표적으로 많이 사용되는 심벌 몇 개를 소개하면서 마무리하고, 더 자세한 내용은 MySQL이나 POSIX 정규 표현식 매뉴얼을 참조하길 바란다.
+여기서는 대표적으로 많이 사용되는 심벌 몇 개를 소개하고, 더 자세한 내용은 MySQL이나 POSIX 정규 표현식 매뉴얼을 참조하길 바란다.
 
 - ^: 문자열의 시작을 표시.
-  정규 표현식은 그 표현식에 일치하는 부분이 문자열의 시작이나 중간 또는 끝부분 어디에 나타나든 관계없지만 "^" 심벌을 표현식의 앞쪽에 넣어주면 일치하는 부분이 반드시 문자열의 제일 앞쪽에 있어야
-  함을 의미한다.
+  정규 표현식은 그 표현식에 일치하는 부분이 문자열의 시작이나 중간 또는 끝부분 어디에 나타나든 관계없지만 "^" 심벌을 표현식의 앞쪽에 넣어주면 일치하는 부분이 반드시 문자열의 제일 앞쪽에 있어야 함을
+  의미한다.
+
 - $: 문자열의 끝을 표시. "^"와는 반대로 표현식의 끝부분에 "$"를 넣어주면 일치하는 부분이 반드시 문자열의 제일 끝에 있어야 함을 의미한다.
-- []: 문자 그룹을 표시. [xyz] 또는 [x-z]라고 표현하면 'x','y','z' 문자 중 하나인지 확인하는 것이다. 대괄호는 문자열이 아니라 문자 하나와 일치하는지를 확인하는 것이다.
-- (): 문자열 그룹을 표시. (xyz)라고 표현하면 세 문자 중 한 문자가 이쓴지 체크하는 것이 아니라 반드시 "xyz"가 모두 있는지 확인하는 것이다.
+- []: 문자 그룹을 표시. [xyz] 또는 [x-z]라고 표현하면 'x', 'y', 'z' 문자 중 하나인지 확인하는 것이다. 대괄호는 문자열이 아니라 문자 하나와 일치하는지를 확인하는 것이다.
+- (): 문자열 그룹을 표시. (xyz)라고 표현하면 세 문자 중 한 문자가 있는지 체크하는 것이 아니라 반드시 "xyz"가 모두 있는지 확인하는 것이다.
 - |: "|"로 연결된 문자열 중 하나인지 확인한다. "abc|xyz"라고 표현하면 "abc"이거나 "xyz"인지 확인하는 것이다.
 - .: 어떠한 문자든지 1개의 문자를 표시하며, 정규 표현식으로 "..."이라고 표현했다면 3개의 문자(실제 문자의 값과 관계없이)로 구성된 문자열을 찾는 것이다.
-- *: 이 기호 앞에 표시된 정규 표현식이 0 또는 1번 이상 반복될 수 있다는 표시다.
+- *: 이 기호 앞에 표시된 정규 표현식이 0번 또는 1번 이상 반복될 수 있다는 표시다.
 - +: 이 기호 앞에 표시된 정규 표현식이 1번 이상 반복될 수 있다는 표시다.
 - ?: 이 기호 앞에 표시된 정규 표현식이 0 또는 1번만 올 수 있다는 표시다.
 
@@ -339,7 +342,7 @@ mysql> SELECT 'abcdef' LIKE '%ef';
 +----------------------+
 ```
 
-LIKE에서 사용할 수 있는 와일드카드 문자는 '%'와 "_"가 전부다.
+LIKE에서 사용할 수 있는 와일드카드 문자는 "%"와 "_"가 전부다.
 REGEXP는 비교 대상 문자열의 일부에 대해서만 일치해도 TRUE를 반환하는 반면, LIKE는 항상 비교 대상 문자열의 처음부터 끝까지 일치하는 경우에만 TRUE를 반환한다.
 
 - %: 0 또는 1개 이상의 모든 문자에 일치(문자의 내용과 관계없이)
@@ -369,7 +372,7 @@ mysql> SELECT 'a%' LIKE 'a/%' ESCAPE '/';
 +-----------------------------+
 ```
 
-LIKE 연산자는 와일드카드 문자인(%,_)가 검색어의 뒤쪽에 있다면 인덱스 레인지 스캔으로 사용할 수 있지만 와일드카드가 검색어의 앞쪽에 있다면 인덱스 레인지 스캔을 사용할 수 없으므로 주의해서
+LIKE 연산자는 와일드카드 문자인 (%, _)가 검색어의 뒤쪽에 있다면 인덱스 레인지 스캔으로 사용할 수 있지만 와일드카드가 검색어의 앞쪽에 있다면 인덱스 레인지 스캔을 사용할 수 없으므로 주의해서
 사용해야 한다.
 
 ```
@@ -379,18 +382,18 @@ mysql> EXPLAIN
        WHERE first_name LIKE 'Christ%';
 ```
 
-employees 테이블에서 "Christ"로 시작하는 이름을 검색하려면 다음과 같이 인덱스 레인지 스캔을 이용해 검색할 수 있다.
+employees 테이블에서 "Christ"로 시작하는 이름을 검색하려면 다음과 같이 인덱스 레인지 스캔을 사용해 검색할 수 있다.
 
 ```
 +----+----------+-------+--------------+------+--------------------------+
 | id | table    | type  | key          | rows | Extra                    |
 +----+----------+-------+--------------+------+--------------------------+
-|  1 | emloyees | range | ix_firstname |  226 | Using where; Using index |
+|  1 | employee | range | ix_firstname |  226 | Using where; Using index |
 +----+----------+-------+--------------+------+--------------------------+
 ```
 
-하지만 "rist"으로 끝나는 이름을 검색할 때는 와일드카드가 검색어의 앞쪽에 있게 되는데, 이 경우 인덱스의 Left-most 특성으로 인해 레인지 스캔을 사용하지 못하고 인덱스를 처음부터 끝까지 읽는
-인덱스 풀 스캔 방식으로 쿼리가 처리된다.
+하지만 "rist"으로 끝나는 이름을 검색할 때는 와일드카드가 검색어의 앞쪽에 있게 되는데, 이 경우 인덱스의 Left-most 특성으로 인해 레인지 스캔을 사용하지 못하고 인덱스를 처음부터 끝까지 읽는 인덱스
+풀 스캔 방식으로 쿼리가 처리된다.
 
 ```
 mysql> EXPLAIN
@@ -398,16 +401,15 @@ mysql> EXPLAIN
        FROM employees
        WHERE first_name LIKE '%rist';
 
-+----+----------+-------+--------------+--------+--------------------------+
-| id | table    | type  | key          | rows   | Extra                    |
-+----+----------+-------+--------------+--------+--------------------------+
-|  1 | emloyees | index | ix_firstname | 300584 | Using where; Using index |
-+----+----------+-------+--------------+--------+--------------------------+
++----+-----------+-------+--------------+--------+--------------------------+
+| id | table     | type  | key          | rows   | Extra                    |
++----+-----------+-------+--------------+--------+--------------------------+
+|  1 | employees | index | ix_firstname | 300584 | Using where; Using index |
++----+-----------+-------+--------------+--------+--------------------------+
 ```
 
 ### [8] BETWEEN 연산자
-BETWEEN 연산자는 "크거나 같다"와 "작거나 같다"라는 두 개의 연산자를 하나로 합친 연산자다. 이미 많이 알려진 연산자이므로 연산자 자체에 대한 설명은 생략한다.
-BETWEEN 연사자는 다른 비교 조건과 결합해 하나의 인덱스를 사용할 때 주의해야 할 점이 있다.
+BETWEEN 연산자는 "크거나 같다"와 "작거나 같다"라는 두 개의 연산자를 하나로 합친 연산자다. 이미 많이 알려진 연산자로, 다른 비교 조건과 결합해 하나의 인덱스를 사용할 때 주의해야 할 점이 있다.
 동등 비교 연산자와 BETWEEN 연산자를 이용해 부서 번호와 사원 번호로 dept_emp 테이블을 조회하는 다음 쿼리를 한번 생각해보자.
 
 ```
@@ -423,7 +425,7 @@ dept_emp 테이블에는 (dept_no, emp_no) 칼럼으로 구성된 프라이머�
 검색해야만 한다. 결국 BETWEEN이 사용된 두 번째 쿼리에서 emp_no=10001 조건은 비교 범위를 줄이는 역할을 하지 못한다.
 
 BETWEEN과 IN을 동일한 비교 연산자로 생각하는 경우도 있는데, 사실 BETWEEN은 크다와 작다 비교를 하나로 묶어 둔 것에 가깝다. 그리고 IN 연산자의 처리 방법은 동등 비교(=) 연산자와 비슷하다.
-아래 그림은 이 IN과 BETWEEN 처리 과정의 차이를 보여주는데, IN 연산자는 여러 개의 동등 비교(=)를 하나로 묶은 것과 같은 연산자라서 IN과 동등 비교 연산자는 같은 형태로 인덱스를 사용한다.
+아래 그림은 IN과 BETWEEN 처리 과정의 차이를 보여주는데, IN 연산자는 여러 개의 동등 비교(=)를 하나로 묶은 것과 같은 연산자라서 IN과 동등 비교 연산자는 같은 형태로 인덱스를 사용한다.
 
 #### [그림 11.2] BETWEEN(왼쪽)과 IN(오른쪽)의 인덱스 사용 방법의 차이
 <img src="https://github.com/user-attachments/assets/4259b0d7-88ef-409b-8105-391cb7f18cb3" width="350"/><br/>
@@ -437,18 +439,20 @@ WHERE dept_no IN ('d003', 'd004', 'd005')
   AND emp_no=10001;
 ```
 
-BETWEEN이 선형으로 인덱스를 검색해야 하는 것과 달리 IN은 동등(Equal) 비교를 여러 번 수행하는 것과 같은 효과가 있기 때문에 dept_emp 테이블의 인덱스(dept_no, emp_no)를 최적으로 사용할
+BETWEEN이 선형으로 인덱스를 검색해야 하는 것과는 달리 IN은 동등(Equal) 비교를 여러 번 수행하는 것과 같은 효과가 있기 때문에 dept_emp 테이블의 인덱스(dept_no, emp_no)를 최적으로 사용할
 수 있는 것이다.
 
 이 예제처럼 여러 칼럼으로 인덱스가 만들어져 있는데, 인덱스 앞쪽에 있는 칼럼의 선택도가 떨어질 때는 IN으로 변경하는 방법으로 쿼리의 성능을 개선할 수도 있다.
 실제 두 쿼리의 차이는 실행 계획을 통해서도 알 수 있다.
-다음 예제 쿼리에서 사용된 "USE INDEX(PRIMARY)" 힌트는 단지 이 예제를 재현하기 위해 사용한 것일 뿐, BETWEEN과 IN 연산자의 처리 방법과는 전혀 무관하다.
+다음 예제 쿼리에서 사용된 "USE INDEX(PRIMARY)" 힌트는 단지 이 예제를 재현하기 위해 사용한 것일 뿐, BETWEEN과 IN 연산자의 처리 방법과는 전혀 무관하다.(USE INDEX(PRIMARY) 힌트가
+없다면 MySQL 서버는 (emp_no, from_date) 칼럼 조합의 인덱스를 사용할 것이다. 하지만 BETWEEN 연산자와 IN 연산자의 비교 설명을 위한 예제는 PRIMARY 인덱스를 사용해야 한다.
+즉, 이 예제는 dept_emp 테이블에 (emp_no, from_date) 조합의 인덱스가 없다는 가정에서 만들어진 예제라고 생각하면 된다.)
 
 ```
-mysql> SELECT * FROM dept_emp USE INDEX(PRIMARY)
+mysql> SELECT * FROM dept_emp USE_INDEX(PRIMARY)
        WHERE dept_no BETWEEN 'd003' AND 'd005' AND emp_no=10001;
 
-mysql> SELECT * FROM dept_emp USE INDEX(PRIMARY)
+mysql> SELECT * FROM dept_emp USE_INDEX(PRIMARY)
        WHERE dept_no IN ('d003', 'd004', 'd005') AND emp_no=10001;
 ```
 
@@ -465,28 +469,27 @@ mysql> SELECT * FROM dept_emp USE INDEX(PRIMARY)
 그리고 다음은 BETWEEN 대신 IN 연산자를 사용한 두 번째 예제 쿼리의 실행 계획이다.
 
 ```
-+----+----------+-------+---------+---------+--------+-------------+
-| id | table    | type  | key     | key_len | rows   | Extra       |
-+----+----------+-------+---------+---------+--------+-------------+
-|  1 | dept_emp | range | PRIMARY | 20      |      3 | Using where |
-+----+----------+-------+---------+---------+--------+-------------+
++----+----------+-------+---------+---------+------+-------------+
+| id | table    | type  | key     | key_len | rows | Extra       |
++----+----------+-------+---------+---------+------+-------------+
+|  1 | dept_emp | range | PRIMARY | 20      |    3 | Using where |
++----+----------+-------+---------+---------+------+-------------+
 ```
 
 BETWEEN을 사용한 쿼리와 IN을 사용한 쿼리 둘 다 인덱스 레인지 스캔을 하고 있지만 실행 계획의 rows 칼럼에 표시된 레코드 건수는 매우 큰 차이가 있음을 알 수 있다.
-BETWEEN 비교를 사용한 쿼리에서는 부서 번호가 'd003'인 레코드부터 'd005'인 레코드의 전체 범위를 다 비교해야 하지만 IN을 사용한 쿼리에서는 부서 번호와 사원번호가 (('d003', 10001),
+BETWEEN 비교를 사용한 쿼리에서는 부서 번호가 'd003'인 레코드부터 'd005'인 레코드의 전체 범위를 다 비교해야 하지만 IN을 사용한 쿼리에서는 부서 번호와 사원 번호가 (('d003', 10001),
 ('d004', 10001), ('d005', 10001)) 조합인 레코드만 비교해 보면 되기 때문이다.
 
-예전 버전의 MySQL 서버에서는 BETWEEN 연산자를 IN 연산자로 변경하기 위해서는 우선 dept_no 칼럼의 값이 'd003'와 'd005' 사이의 모든 부서 코드 값을 가져와 "dept_no IN
-('d003','d004','d005')" 조건을 만들어야 했다.
-하지만 MySQL 8.0 버전부터는 다음과 같이 "IN (subquery)" 형태로 작성하면 옵티마이저가 세미 조인 최적화를 이용해 더 빠른 쿼리로 변환해서 실행한다.
+예전 버전의 MySQL 서버에서는 BETWEEN 연산자를 IN 연산자로 변경하기 위해서는 우선 dept_no 칼럼의 값이 'd003'와 'd005' 사이의 모든 부서 코드 값을 가져와 "dept_no IN ('d003',
+'d004', 'd005')" 조건을 만들어야 했다. 하지만 MySQL 8.0 버전부터는 다음과 같이 "IN (subquery)" 형태로 작성하면 옵티마이저가 세미 조인 최적화를 이용해 더 빠른 쿼리로 변환해서 실행한다.
 
 ```
 SELECT *
-FROM dept_emp USE INDEX(PRIMARY)
+FROM dept_emp USE_INDEX(PRIMARY)
 WHERE dept_no IN (
-      SELECT dept_no
-      FROM departments
-      WHERE dept_no BETWEEN 'd003' AND 'd005')
+       SELECT dept_no
+       FROM departments
+       WHERE dept_no BETWEEN 'd003' AND 'd005')
   AND emp_no=10001;
 ```
 
@@ -495,27 +498,27 @@ WHERE dept_no IN (
 >
 > ```
 > SELECT *
-> FROM department d
->   INNER JOIN dept_emp de USE INDEX(PRIMARY) ON de.dept_no=d.dept_no AND de.emp_no=10001
+> FROM departments d
+>   INNER JOIN dept_emp de USE_INDEX(PRIMARY) ON de.dept_no=d.dept_no AND de.emp_no=10001
 > WHERE d.dept_no BETWEEN 'd003' AND 'd005';
 > ```
 >
 > MySQL 8.0 버전의 세미 조인 최적화 기능은 상당히 많이 안정화됐다. 그래서 실제로는 위의 "IN (subquery)" 조인을 실행해도 MySQL 옵티마이저는 JOIN 쿼리로 재작성해서 쿼리를 최적화한다.
 
 ### [9] IN 연산자
-IN은 여러 개의 값에 대해 동등 비교 연산자를 수행하는 연산자다. 여러 개의 값이 비교되지만 범위로 검색하는 것이 아니라 여러 번의 동등 비교로 실행하기 때문에 일반적으로 빠르게 처리된다.
+IN은 여러 개의 값에 대해 동등 비교 연산을 수행하는 연산자다. 여러 개의 값이 비교되지만 범위로 검색하는 것이 아니라 여러 번의 동등 비교로 실행하기 때문에 일반적으로 빠르게 처리된다.
 IN 연산자는 다음과 같이 두 형태를 구분해서 생각해볼 필요가 있다.
 
 - 상수가 사용된 경우 - IN (?, ?, ?)
 - 서브쿼리가 사용된 경우 - IN (SELECT .. FROM ..)
 
-IN 연산자에 상수가 사용된 경우는 동등 비교와 동일하게 작동하기 때문에 매우 빠르게 쿼리가 처리될 것이다.
-MySQL 8.0 이전 버전까지는 IN 절에 튜플(레코드)을 사용하면 항상 풀 테이블 스캔을 했었다. 다음 예제 쿼리를 한번 살펴보자.
+IN 연산자에 상수가 사용된 경우는 동등 비교와 동일하게 작동하기 때문에 매우 빠르게 쿼리가 처리될 것이다. MySQL 8.0 이전 버전까지는 IN 절에 튜플(레코드)을 사용하면 항상 풀 테이블 스캔을 했었다.
+다음 예제 쿼리를 한번 살펴보자.
 
 ```
 mysql> SELECT *
        FROM dept_emp
-       WHERE (dept_no, emp_no) IN (('d001',10017), ('d002',10144), ('d003',10054));
+       WHERE (dept_no, emp_no) IN (('d001', 10017), ('d002', 10144), ('d003', 10054));
 ```
 
 위의 예제 쿼리는 IN 절의 상숫값이 단순 스칼라값이 아니라 튜플이 사용됐다. MySQL 8.0 이전 버전까지는 이런 쿼리를 실행하면 성능에 문제가 생겨서 일부러 쿼리를 쪼개어 여러 번 실행했다.
@@ -529,7 +532,7 @@ mysql> SELECT *
 +----+----------+-------+---------+---------+------+-------------+
 ```
 
-실행 계획을 살펴보면 dept_emp 테이블의 프라이머리 키를 이용했는데, key_len 칼럼의 값이 20인 것으로 보아 dept_emp 칼럼(4글자✕4바이트)과 emp_no 칼럼(4바이트)을 모두 이용해 인덱스 레인지
+실행 계획을 살펴보면 dept_emp 테이블의 프라이머리 키를 이용했는데, key_len 칼럼의 값이 20인 것으로 보아 dept_no 칼럼(4글자✕4바이트)과 emp_no 칼럼(4바이트)을 모두 이용해 인덱스 레인지
 스캔을 실행한다는 것을 확인할 수 있다.
 
 IN (subquery) 형태의 조건이 사용된 쿼리는 최적화가 매우 까다로운데, MySQL 8.0 이전 버전까지만 해도 최적화가 상당히 불안했다.
@@ -542,7 +545,7 @@ NOT IN 연산자가 프라이머리 키와 비교될 때 가끔 쿼리의 실행
 <br/>
 ## (3) MySQL 내장 함수
 DBMS 종류와 관계없이 기본적인 기능의 SQL 함수는 대부분 동일하게 제공된다. 하지만 함수의 이름이나 사용법은 표준이 없으므로 DBMS별로 거의 호환되지 않는다.
-MySQL의 함수는 MySQL에서 기본적으로 제공하는 내장 함수와 사용자가 직접 작성해서 추가할 수 있는 사용자 정의 함수(UDF, User Defined Function)로 구분된다.
+MySQL의 함수는 MySQL에서 기본으로 제공하는 내장 함수와 사용자가 직접 작성해서 추가할 수 있는 사용자 정의 함수(UDF, User Defined Function)로 구분된다.
 MySQL에서 제공하는 C/C++ API를 이용해 사용자가 원하는 기능을 직접 함수로 만들어 추가할 수 있는데, 이를 사용자 정의 함수라고 한다.
 여기서 언급하는 내장 함수나 사용자 정의 함수는 스토어드 프로그램으로 작성되는 프로시저나 스토어드 함수와는 다르므로 혼동하지 않도록 주의하자.
 
@@ -551,7 +554,7 @@ IFNULL()은 칼럼이나 표현식의 값이 NULL인지 비교하고, NULL이면
 IFNULL() 함수에는 두 개의 인자를 전달하는데, 첫 번째 인자는 NULL인지 아닌지 비교하려는 칼럼이나 표현식을, 두 번째 인자로는 첫 번째 인자의 값이 NULL일 경우 대체할 값이나 칼럼을 설정한다.
 IFNULL() 함수의 반환 값은 첫 번째 인자가 NULL이 아니면 첫 번째 인자의 값을, 첫 번째 인자의 값이 NULL이면 두 번째 인자의 값을 반환한다.
 
-ISNULL() 함수는 이름 그대로 인자로 전달한 표현식이나 칼럼의 값이 NULL인지 아닌지 비교하는 함수다. 반환되는 값은 인자의 표현식이 NULL이면 TRUE(1), NULL이 아니면 FALSE(0)를 반환한다.
+ISNULL() 함수는 이름 그대로 이나로 전달한 표현식이나 칼럼의 값이 NULL인지 아닌지 비교하는 함수다. 반환되는 값은 인자의 표현식이 NULL이면 TRUE(1), NULL이 아니면 FALSE(0)를 반환한다.
 두 함수의 사용법을 예제로 살펴보자.
 
 ```
@@ -598,7 +601,7 @@ mysql> SELECT SYSDATE(), SLEEP(2), SYSDATE();
 +---------------------+----------+---------------------+
 ```
 
-NOW() 함수를 사용한 첫 번째 예제에서는 두 번쨰 NOW() 함수 결과가 같은 값을 반환했다.
+NOW() 함수를 사용한 첫 번째 예제에서는 두 번의 NOW() 함수 결과가 같은 값을 반환했다.
 하지만 두 번째 예제에서 사용된 SYSDATE() 함수는 SLEEP() 함수의 대기 시간인 2초 동안의 차이가 있음을 알 수 있다.
 
 SYSDATE() 함수는 이러한 특성 탓에 두 가지 큰 잠재적인 문제가 있다.
@@ -619,7 +622,7 @@ mysql> EXPLAIN
        WHERE emp_no=10001 AND from_date>SYSDATE();
 ```
 
-다음은 NOW() 함수를 사용하는 첫 번째 예제 쿼리의 실행 게획이다.
+다음은 NOW() 함수를 사용하는 첫 번째 예제 쿼리의 실행 계획이다.
 
 ```
 +----+----------+-------+---------+---------+------+-------------+
@@ -639,22 +642,22 @@ mysql> EXPLAIN
 +----+----------+-------+---------+---------+------+-------------+
 ```
 
-위의 예제를 살펴보면 첫 번째 쿼리는 emp_no와 from_date 칼럼 모두 적절히 인덱스를 사용했기 때문에 인덱스의 전체 길이인 7바이트를 모두 사용했지만 두 번째 쿼리는 emp_no 칼럼만 인덱스를
-사용했기 때문에 인덱스 중에서 emp_no에 속하는 4바이트만 레인지 스캔에 이용했다.
+위의 예제를 살펴보면 첫 번째 쿼리는 emp_no와 from_date 칼럼 모두 적절히 인덱스를 사용했기 때문에 인덱스의 전체 길이인 7바이트를 모두 사용했지만 두 번째 쿼리는 emp_no 칼럼만 인덱스를 사용했기
+떄문에 인덱스 중에서 emp_no에 속하는 4바이트만 레인지 스캔에 이용했다.
 
-SYSDATE() 함수는 위에서도 언급했듯이 이 함수가 호출될 때마다 다른 값으로 반환하므로 사실은 상수가 아니다. 그래서 인덱스를 스캔할 때도 매번 비교되는 레코드마다 함수를 실행해야 한다.
-하지만 NOW() 함수는 쿠리가 실행되는 시점에서 실행되고 값을 할당받아서 그 값을 SQL 문장의 모든 부분에서 사용하기 때문에 쿼리가 1시간 동안 실행되더라도 실행되는 위치나 시점에 관계없이 항상 같은
+SYSDATE() 함수는 이 함수가 호출될 때마다 다른 값을 반환하므로 사실은 상수가 아니다. 그래서 인덱스를 스캔할 때도 매번 비교되는 레코드마다 함수를 실행해야 한다.
+하지만 NOW() 함수는 쿼리가 실행되는 시점에서 실행되고 값을 할당받아서 그 값을 SQL 문장의 모든 부분에서 사용하기 때문에 쿼리가 1시간 동안 실행되더라도 실행되는 위치나 시점에 관계없이 항상 같은
 값을 보장할 수 있다.
 
 꼭 필요한 때가 아니라면 SYSDATE() 함수를 사용하지 않는 편이 좋겠지만, 이미 SYSDATE() 함수를 사용하고 있다면 MySQL 서버의 설정 파일(my.cnf나 my.ini 파일)에 sysdate-is-now 시스템
 변수를 넣어서 활성화하는 것이 이 같은 문제점을 제거하는 빠른 해결책이다.
-sysdate-is-now가 설정되면 SYSDATE() 함수도 NOW() 함수와 같이 함수의 호출 시점에 관계없이 하나의 SQL에서 같은 값을 갖게 된다.
+sysdate-is-now가 설정되면 SYSDATE() 함수도 NOW() 함수와 같이 함수의 호출 시점에 관계없이 하나의 SQL에서는 같은 값을 갖게 된다.
 사실 일반적인 웹 서비스에서는 특별히 SYSDATE() 함수를 사용해야 할 이유가 없다.
 시스템 설정 파일(my.cnf)에 sysdate-is-now 시스템 변수를 추가해서 SYSDATE() 함수가 NOW() 함수와 동일하게 작동하게 설정할 것을 권장한다.
-그뿐만 아니라 복제를 사용하고 있다면 모든 복제 소스 서버와 레플리카 서버에 공통으로 적용할 것을 권장한다.
+그뿐만 아니라 복제를 사용하고 있다면 모든 복제 소스 서버와 래플리카 서버에 공통으로 적용할 것을 권장한다.
 
 ### [3] 날짜와 시간의 포맷(DATE_FORMAT, STR_TO_DATE)
-DATETIME 타입의 칼럼이나 값을 원하는 형태의 문자열로 변환행 할 때는 DATE_FORMAT() 함수를 이용하면 된다. 날짜의 각 부분을 의미하는 지정자는 다음과 같다.
+DATETIME 타입의 칼럼이나 값을 원하는 형태의 문자열로 변환해야 할 때는 DATE_FORMAT() 함수를 이용하면 된다. 날짜의 각 부분을 의미하는 지정자는 다음과 같다.
 여기서는 대표적인 지정자만 나열했으며, 나머지 더 자세한 사항은 매뉴얼을 참조하자.
 
 |지정문자|내용|
@@ -689,14 +692,14 @@ SQL에서 표준 형태(년-월-일 시:분:초)로 입력된 문자열은 필�
 이때 STR_TO_DATE() 함수를 이용해 문자열을 DATETIME 타입으로 변환할 수 있다. 날짜의 각 부분을 명시하는 지정자는 DATE_FORMAT() 함수에서 사용했던 지정자와 동일하게 사용하면 된다.
 
 ```
-mysql> SELECT STR_TO_DATE('2020-08-23','%Y-%m-%d') AS current_dt;
+mysql> SELECT STR_TO_DATE('2020-08-23', '%Y-%m-%d') AS current_dt;
 +------------+
 | current_dt |
 +------------+
 | 2020-08-23 |
 +------------+
 
-mysql> SELECT STR_TO_DATE('2020-08-23 15:06:45','%Y-%m-%d %H:%i:%s') AS current_dttm;
+mysql> SELECT STR_TO_DATE('2020-08-23 15:06:45', '%Y-%m-%d %H:%i:%s') AS current_dttm;
 +---------------------+
 | current_dttm        |
 +---------------------+
@@ -706,9 +709,9 @@ mysql> SELECT STR_TO_DATE('2020-08-23 15:06:45','%Y-%m-%d %H:%i:%s') AS current_
 
 ### [4] 날짜와 시간의 연산(DATE_ADD, DATE_SUB)
 특정 날짜에서 연도나 월일 또는 시간 등을 더하거나 뺄 때는 DATE_ADD() 함수나 DATE_SUB() 함수를 사용한다.
-사실 DATE_ADD() 함수로 더하거나 빼는 처리를 모두 할 수 있기 때문에 DATE_SUB()는 크게 필요하지 않다.
-DATE_ADD() 함수와 DATE_SUB() 함수 모두 두 개의 인자를 필요로 하는데, 첫 번째 인자는 연산을 수행할 날짜이며, 두 번째 인자는 더하거나 뺴고자 하는 월의 수나 일자의 수 등을 입력하면 된다.
-두 번째 인자는 INTERVAL n [YEAR, MONTH, DAY, HOUR, MINUTE, SECOND,...] 형태로 입력해야 한다.
+사실 DATE_ADD() 함수로 더하거나 빼는 처리를 모두 할 수 있기 떄문에 DATE_SUB()는 크게 필요하지 않다.
+DATE_ADD() 함수와 DATE_SUB() 함수 모두 두 개의 인자를 필요로 하는데, 첫 번째 인자는 연산을 수행할 날짜이며, 두 번째 인자는 더하거나 빼고자 하는 월의 수나 일자의 수 등을 입력하면 된다.
+두 번째 인자는 INTERVAL n [YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, ...] 형태로 입력해야 한다.
 여기서 n은 더하거나 빼고자 하는 차이 값이며, 그 뒤에 명시되는 단위에 따라 하루를 더할지 한 달을 더할지를 결정한다.
 
 ```
@@ -735,8 +738,8 @@ mysql> SELECT DATE_ADD(NOW(), INTERVAL -1 DAY) AS yesterday;
 |MONTH|월(중간의 숫자 값은 더하거나 뺄 개월 수를 의미함)|
 |DAY|일(중간의 숫자 값은 더하거나 뺄 일자 수를 의미함)|
 |HOUR|시(중간의 숫자 값은 더하거나 뺄 시를 의미함)|
-|MINUTE|분(중간의 숫자 값은 더하거나 뺄 분 수를 의미함)|
-|SECOND|초(중간의 숫자 값은 더하거나 뺄 초 수를 의미함)|
+|MINUTE|분(중간의 숫자 값은 더하거나 뺄 분을 의미함)|
+|SECOND|초(중간의 숫자 값은 더하거나 뺄 초를 의미함)|
 |MICROSECOND|마이크로 초(중간의 숫자 값은 더하거나 뺄 마이크로초 수를 의미함)|
 |QUARTER|분기(중간의 숫자 값은 더하거나 뺄 분기의 수를 의미함)|
 |WEEK|주(중간의 숫자 값은 더하거나 뺄 주 수를 의미함)|
@@ -745,7 +748,7 @@ mysql> SELECT DATE_ADD(NOW(), INTERVAL -1 DAY) AS yesterday;
 UNIX_TIMESTAMP() 함수는 '1970-01-01 00:00:00'으로부터 경과된 초의 수를 반환하는 함수다.
 다른 운영체제나 프로그래밍 언어에서도 같은 방식으로 타임스탬프를 산출하는 경우에는 상호 호환해서 사용할 수 있다.
 UNIX_TIMESTAMP() 함수는 인자가 없으면 현재 날짜와 시간의 타임스탬프 값을, 인자로 특정 날짜를 전달하면 그 날짜와 시간의 타임스탬프를 반환한다.
-FROM_UNIXTIME() 함수는 UNIX_TIMESTAMP() 함수와 반대로, 인자로 전달한 타임스탬프 값을 DATETIME 타입으로 변환하는 함수다.
+FROM_UNIXTIME() 함수는 UNIX_TIMESTAMP() 함수오 반대로, 인자로 전달한 타임스탬프 값을 DATETIME 타입으로 변환하는 함수다.
 
 ```
 mysql> SELECT UNIX_TIMESTAMP();
@@ -845,7 +848,7 @@ mysql> SELECT CONCAT('Georgi','Christian',CAST(2 AS CHAR)) AS name;
 ```
 
 비슷한 함수로 CONCAT_WS()라는 함수가 있는데, 각 문자열을 연결할 때 구분자를 넣어준다는 점을 제외하면 CONCAT() 함수와 같다.
-CONCAT_WS() 함수는 첫 번째 인자를 구분자로 사용할 문자로 인식하고, 두 번째 인자부터는 연결할 문자로 인식한다(CONCAT_WS 함수의 이름에서 "WS"는 "With Separator"의 약어다).
+CONCAT_WS() 함수는 첫 번째 인자를 구분자로 사용할 문자로 인식하고, 두 번째 인자부터는 연결할 문자로 인식한다.
 
 ```
 mysql> SELECT CONCAT_WS(',','Georgi','Christian') AS name;
@@ -858,7 +861,7 @@ mysql> SELECT CONCAT_WS(',','Georgi','Christian') AS name;
 
 ### [8] GROUP BY 문자열 결합(GROUP_CONCAT)
 COUNT()나 MAX(), MIN(), AVG() 등과 같은 그룹 함수(Aggregate, 여러 레코드의 값을 병합해서 하나의 값을 만들어내는 함수) 중 하나다.
-주로 GROUP BY와 함꼐 사용하며, GROUP BY가 없는 SQL에서 사용하면 단 하나의 결괏값만 만들어낸다.
+주로 GROUP BY와 함께 사용하며, GROUP BY가 없는 SQL에서 사용하면 단 하나의 결괏값만 만들어낸다.
 GROUP_CONCAT() 함수는 값들을 먼저 정렬한 후 연결하거나 각 값의 구분자 설정도 가능하며, 여러 값 중에서 중복을 제거하고 연결하는 것도 가능하므로 상당히 유용하게 사용된다.
 간단히 예제를 한번 살펴보자.
 
@@ -870,7 +873,7 @@ mysql> SELECT GROUP_CONCAT(dept_no) FROM departments;
 | d009,d005,d002,d003,d001,d004,d006,d008,d007 |
 +----------------------------------------------+
 
-mysql> SELECT GROUP_CONCAT(dept_no SEPERATOR '|') FROM departments;
+mysql> SELECT GROUP_CONCAT(dept_no SEPARATOR '|') FROM departments;
 +----------------------------------------------+
 | GROUP_CONCAT(dept_no)                        |
 +----------------------------------------------+
@@ -888,7 +891,7 @@ mysql> SELECT GROUP_CONCAT(dept_no ORDER BY emp_no DESC)
 
 mysql> SELECT GROUP_CONCAT(DISTINCT dept_no ORDER BY emp_no DESC)
        FROM dept_emp
-       WHERE emp_no BEWEEN 100001 and 100003;
+       WHERE emp_no BETWEEN 100001 AND 100003;
 +-----------------------------------------------------+
 | GROUP_CONCAT(DISTINCT dept_no ORDER BY emp_no DESC) |
 +-----------------------------------------------------+
@@ -908,15 +911,15 @@ MySQL 클라이언트 또는 TOAD나 SQLyog 같은 GUI 도구를 이용해 실�
 하지만 GROUP_CONCAT() 함수가 JDBC로 실행될 때는 경고가 아니라 에러로 취급되어 쿼리가 실패하기 때문에 GROUP_CONCAT()의 결과가 지정된 버퍼 크기를 초과하지 않게 주의해야 한다.
 
 GROUP_CONCAT() 함수가 사용하는 메모리 버퍼의 크기는 `group_concat_max_len` 시스템 변수로 조정할 수 있다.
-기본으로 설정된 버퍼의 크기가 1KB밖에 안 되기 때문에 GROUP_CONCAT() 함수를 자주 사용한다면 버퍼의 크기를 적절히 늘려서 설정해 두는 것도 좋다.
+기본적으로 설정된 버퍼의 크기가 1KB밖에 안 되기 때문에 GROUP_CONCAT() 함수를 자주 사용한다면 버퍼의 크기를 적절히 늘려서 설정해 두는 것도 좋다.
 MySQL 8.0 이전 버전까지는 GROUP BY의 그룹별로 개수를 제한해서 가져올 수 있는 방법이 없었다. 하지만 MySQL 8.0 버전부터는 용도에 맞게 다음과 같이 래터럴 조인이나 윈도우 함수를 이용할 수 있다.
 
 ```
 -- // 윈도우 함수를 이용해 최대 5개 부서만 GROUP_CONCAT 실행
 mysql> SELECT GROUP_CONCAT(dept_no ORDER BY dept_name DESC)
        FROM (
-           SELECT *, RANK() OVER (ORDER BY dept_no) AS rnk
-           FROM departments
+         SELECT *, RANK() OVER (ORDER BY dept_no) AS rnk
+         ROM departments
        ) as x
        WHERE rnk <= 5;
 +-----------------------------------------------+
@@ -950,18 +953,18 @@ mysql> SELECT d.dept_no, GROUP_CONCAT(de2.emp_no)
 ```
 
 ### [9] 값의 비교와 대체(CASE WHEN ... THEN ... END)
-CASE WHEN은 함수가 아니라 SQL 구문이고 프로그래밍 언어에서 제공하는 SWITCH 구문과 같은 역할을 한다.
+CASE WHEN은 함수가 아니라 SQL 구문이다. CASE WHEN은 프로그래밍 언어에서 제공하는 SWITCH 구문과 같은 역할을 한다.
 CASE로 시작하고 END로 끝나야 하며, WHEN ... THEN ...은 필요한 만큼 반복해서 사용할 수 있다.
 
 크게 2가지 방법으로 사용할 수 있는데, 예제를 통해 살펴보자.
 다음 예제는 단순히 코드 값을 실제 값으로 변환하거나 특정 일자를 기준으로 이전인지 이후인지 비교해 설명을 붙이는 용도로 CASE WHEN이 사용됐다.
-여러 가지 용도로 사용될 수 있으며, 자주 사용되므로 그때그때 사용법을 참조하면 된다.
+여러 가지 용도로 사용될 수 있으며, 다른 예제에서도 자주 사용되므로 그때그때 사용법을 참조하면 된다.
 
 ```
 mysql> SELECT emp_no, first_name,
-         CASE gender WHEN 'M' THEN 'Man'
-                     WHEN 'F' THEN 'Woman'
-                     ELSE 'Unknown' END AS gender
+       CASE gender WHEN 'M' THEN 'Man'
+                   WHEN 'W' THEN 'Woman'
+                   ELSE 'Unknown' END AS gender
        FROM employees
        LIMIT 10;
 ```
@@ -978,7 +981,7 @@ mysql> SELECT emp_no, first_name,
 ```
 
 이 방식은 단순히 두 비교 대상 값의 동등 비교가 아니라 크다 또는 작다 비교와 같이 표현식으로 비교할 때 사용하는 방식이다.
-CASE와 WHEN 사이에는 아무것도 입력하지 않고, WHEN 절에 불리언 값을 반환할 수 있는 표현식을 적어 주면 된다.
+CASE와 WHEN 사이에는 아무것도 입력하지 않고, WHEN 절에 불리언 값을 반환할 수 있는 표현식을 적어주면 된다.
 
 CASE WHEN 구문에서 한 가지 중요한 사실은 CASE WHEN 절이 일치하는 경우에만 THEN 이하의 표현식이 실행된다는 점이다.
 다음 예제 쿼리는 "Marketing('d001')" 부서에 소속된 적이 있는 모든 사원의 가장 최근 급여를 조회하는 쿼리다.
@@ -988,13 +991,13 @@ CASE WHEN 구문에서 한 가지 중요한 사실은 CASE WHEN 절이 일치하
 mysql> SELECT de.dept_no, e.first_name, e.gender,
               (SELECT s.salary FROM salaries s
                WHERE s.emp_no=e.emp_no
-               ORDER BY from_date DESC LIMIT 1) AS last_salary
+               ORDER BY s.from_date DESC LIMIT 1) AS last_salary
        FROM dept_emp de, employees e
        WHERE e.emp_no=de.emp_no
          AND de.dept_no='d001';
 ```
 
-그런데 성별이 여자인 경우에만 최종 급여 정보가 필요하고, 남자이면 그냥 이름만 필요한 경우를 한번 생각해 보자.
+그런데 성별이 여자인 경우에만 최종 급여 정보가 필요하고, 남자이면 그냥 이름만 필요한 경우를 한번 생각해보자.
 물론 이 쿼리를 그대로 사용하면서 남자일 때는 가져온 last_salary 칼럼을 그냥 버리면 된다.
 하지만 남자인 경우는 salaries 테이블을 조회할 필요가 없는데, 서브쿼리는 실행되므로 불필요한 작업을 하는 것이다.
 이런 불필요한 작업을 제거하기 위해 CASE WHEN으로 서브쿼리를 감싸면 필요한 경우에만 서브쿼리를 실행할 수 있다.
@@ -1004,7 +1007,7 @@ mysql> SELECT de.dept_no, e.first_name, e.gender,
               CASE WHEN e.gender='F' THEN
                         (SELECT s.salary FROM salaries s
                          WHERE s.emp_no=e.emp_no
-                         ORDER BY from_date DESC LIMIT 1)
+                         ORDER BY s.from_date DESC LIMIT 1)
                    ELSE 0 END AS last_salary
        FROM dept_emp de, employees e
        WHERE e.emp_no=de.emp_no
@@ -1017,7 +1020,7 @@ mysql> SELECT de.dept_no, e.first_name, e.gender,
 프리페어 스테이트먼트(Prepared Statement)를 제외하면 SQL은 텍스트(문자열) 기반으로 작동하기 때문에 SQL에 포함된 모든 입력값은 문자열처럼 취급된다.
 이럴 때 명시적으로 타입의 변환이 필요하다면 CAST() 함수를 이용하면 된다. CONVERT() 함수도 CAST()와 거의 비슷하며, 단지 함수의 인자 사용 규칙만 조금 다르다.
 
-CAST() 함수를 통해 변환할 수 있는 데이터 타입은 DATE, TIME, DATETIME, BINARY, CHAR, DECIMAL, SIGNED INTEGER, UNSIGNED INTEGER다. 타입을 변환하는 예제를 잠깐 살펴보자.
+CAST() 함수를 통해 변환할 수 있는 데이터 타입은 DATE, TIME, DATETIME, BINARY, CHAR, DECIMAL, SIGNED INTEGER, UNSIGNED INTERGER다. 타입을 변환하는 예제를 잠깐 살펴보자.
 CAST() 함수는 하나의 인자를 받아들이며, 그 하나의 인자는 다시 두 부분으로 나뉘어 첫 번째 부분에 타입을 변환할 값이나 표현식을, 두 번째 부분에는 변환하고자 하는 데이터 타입을 명시하면 된다.
 첫 번째 부분과 두 번째 부분을 구분하기 위해 AS를 사용한다.
 
@@ -1027,10 +1030,10 @@ mysql> SELECT CAST('2000-01-01' AS DATE) AS converted_date;
 ```
 
 일반적으로 문자열과 숫자, 날짜의 변환은 명시적으로 해주지 않아도 MySQL이 자동으로 필요한 형태로 변환하는 경우가 많다.
-하지만 SIGNED와 UNSIGNED 같은 부호 있는 정수 또는 부호 없는 정숫값의 변환은 그렇지 않을 때가 많다. 이때는 다음 예제와 같이 명시적인 타입 변환을 해야 한다.
+하지만 SIGNED나 UNSIGNED 같은 부호 있는 정수 또는 부호 없는 정숫값의 변환은 그렇지 않을 때가 많다. 이때는 다음 예제와 같이 명시적인 타입 변환을 해야 한다.
 
 ```
-mysql> SELECT CAST(1-2 AS UNSIGEND);
+mysql> SELECT CAST(1-2 AS UNSIGNED);
 +-----------------------+
 | CAST(1-2 AS UNSIGNED) |
 +-----------------------+
@@ -1045,7 +1048,7 @@ mysql> SELECT 1-2;
 +-----+
 ```
 
-CONVERT() 함수는 CAST() 함수와 같이 타입을 변환하는 용도와 문자열의 문자 집합을 변환하는 용도라는 두 가지로 사용할 수 있다.
+CONVERT() 함수는 CAST() 함수와 같이 타입을 변환하는 용도의 문자열과 문자 집합을 변환하는 용도라는 두 가지로 사용할 수 있다.
 
 ```
 mysql> SELECT CONVERT(1-2, UNSIGNED);
@@ -1068,16 +1071,16 @@ mysql> SELECT CONVERT('ABC' USING 'utf8mb4');
 첫 번째 부분에는 변환하고자 하는 값이나 표현식, 두 번째 부분에는 문자 집합의 이름을 지정하면 된다. 첫 번째와 두 번째 부분의 구분자로 USING 키워드를 명시하면 된다.
 
 ### [11] 이진값과 16진수 문자열(Hex String) 변환(HEX, UNHEX)
-HEX() 함수는 이진값을 사람이 읽을 수 있는(Human readable) 형태의 16진수의 문자열(Hex String)로 변환하는 함수이고, UNHEX() 함수는 16진수의 문자열(Hex String)을 읽어서
+HEX() 함수는 이진값을 사람이 읽을 수 있는(Human readable) 형태의 16진수 문자열(Hex String)로 변환하는 함수이고, UNHEX() 함수는 16진수의 문자열(Hex String)을 읽어서
 이진값(BINARY)으로 변환하는 함수다. 여기서 이진값은 사람이 읽을 수 있는 형태의 문자열이나 숫자가 아니라 바이너리 값이다.
 
-### [12] 암호화 및 해시 함수(MD5, SHA, SHA2)
+### [12] 암호화 및 해시 함수(MD4, SHA, SHA2)
 MD5와 SHA 모두 비대칭형 암호화 알고리즘인데, 인자로 전달한 문자열을 각각 지정된 비트 수의 해시 값을 만들어내는 함수다.
 SHA() 함수는 SHA-1 암호화 알고리즘을 사용하며, 결과로 160비트(20바이트) 해시 값을 반환한다.
 SHA2() 함수는 SHA 암호화 알고리즘보다 더 강력한 224비트부터 512비트 암호화 알고리즘을 사용해 생성된 해시 값을 반환한다.
 MD5() 함수는 메시지 다이제스트(Message Digest) 알고리즘을 사용해 128비트(16바이트) 해시 값을 반환한다.
 
-이 함수들 모두 사용자의 비밀번호와 같은 암호화가 필요한 정보를 인코딩하는 데 사용되며, 특히 MD5() 함수는 말 그대로 입력된 문자열(Message)의 길이를 줄이는(Digest) 용도로 사용된다.
+이 함수들 모두 사용자의 비밀번호와 같은 암호화가 필요한 정보를 인코딩하는 데 사용되며, 특히 MD5() 함수는 말 그대로 입력된 문자열(Message)의 길이를 줄이는(Digest) 용도로도 사용된다.
 SHA와 MD5 두 함수의 출력 값은 16진수 문자열 형태이기 때문에 저장하려면 저장 공간이 각각 20바이트와 16바이트의 두 배로 필요하다.
 그리고 SHA2 함수는 사용된 인자 값에 따라 출력되는 해시 값의 길이가 달라지므로 사용된 인자의 두 배가 필요하다.
 그래서 암호화된 값을 저장해 두기 위해 MD5() 함수는 CHAR(32), SHA() 함수는 CHAR(40)의 타입을 필요로 한다.
@@ -1117,7 +1120,7 @@ mysql> CREATE TABLE tab_binary (
          col_sha2_256 BINARY(32)
        );
 mysql> INSERT INTO tab_binary VALUES
-         (UNHEX(MD5('abc')), UNHEX(SHA('abc')), UNHEX(SHA2('abc',256));
+         (UNHEX(MD5('abc')), UNHEX(SHA('abc')), UNHEX(SHA2('abc',256)));
 
 mysql> SELECT HEX(col_md5), HEX(col_sha), HEX(col_sha2_256) FROM tab_binary \G
 *************************** 1. row ***************************
@@ -1143,9 +1146,8 @@ CREATE TABLE tb_accesslog (
 ) ENGINE=INNODB;
 ```
 
-위의 테이블에서 access_url 칼럼은 길이가 상당히 길지만, 이 칼럼에 인덱스를 생성해야 한다.
-예전 버전의 MySQL 서버라면 해시ㄹ르 저장하는 칼럼을 수동으로 추가하고 그 칼럼에 인덱스를 생성해야 했다.
-하지만 MySQL 8.0 버전부터는 함수 기반의 인덱스를 생성하면 별도 칼럼을 추가하지 않아도 된다. 다음 예제는 함수 기반의 인덱스를 가지는 테이블 예시다.
+위의 테이블에서 access_url 칼럼은 길이가 상당히 길지만, 이 칼럼에 인덱스를 생성해야 한다. 예전 버전의 MySQL 서버라면 해시를 저장하는 칼럼을 수동으로 추가하고 그 칼럼에 인덱스를 생성해야 했다.
+하지만 MySQL 8.0 버전부터는 함수 기반의 인덱스를 생성하면 별도 칼럼을 추가하지 않아도 된다. 다음 에제는 함수 기반의 인덱스를 가지는 테이블 예시다.
 
 ```
 mysql> CREATE TABLE tb_accesslog (
@@ -1163,7 +1165,7 @@ mysql> CREATE TABLE tb_accesslog (
 -- // 예제 레코드를 INSERT
 mysql> INSERT INTO tb_accesslog VALUES (1, 'http://matt.com', NOW());
 
--- // 데이터를 조회할 때는 다음과 같이 평문으로 검색하면 결과가 없음
+-- // 데이터를 조회할 떄는 다음과 같이 평문으로 검색하면 결과가 없음
 mysql> SELECT * FROM tb_accesslog WHERE MD5(access_url)='http://matt.com';
 Empty set (0.00 sec)
 
@@ -1180,7 +1182,7 @@ mysql> SELECT * FROM tb_accesslog WHERE MD5(access_url)=MD5('http://matt.com');
 여기서 131바이트는 MD5() 함수의 결과 32글자가 차지하는 바이트 수(32✕4)와 메타 정보(문자열 길이)의 공간을 포함한 바이트 수다.
 
 ```
-mysql> EXPLAIN SELECT * FROM tb_accesslog WHERE MD5(access_url)=MD5('http://matt.com');
+mysql> EXPLAIN SELECT * FROM tb_accesslog WHERE MD5(access_log)=MD5('http://matt.com');
 +----+--------------+------+--------------+---------+-----+-------+
 | id | table        | type | key          | key_len | row | Extra |
 +----+--------------+------+--------------+---------+-----+-------+
@@ -1199,7 +1201,7 @@ mysql> CREATE TABLE tb_accesslog (
          INDEX ix_accessurl ( (UNHEX(MD5(access_url))) )
        );
 
-mysql> INSERT INTO tb_accesslog VALUES (1, 'http://matt.com', NOT());
+mysql> INSERT INTO tb_accesslog VALUES (1, 'http://matt.com', NOW());
 
 mysql> SELECT * FROM tb_accesslog WHERE UNHEX(MD5(access_url))=UNHEX(MD5('http://matt.com'));
 +-----------+-----------------+---------------------+
@@ -1207,6 +1209,7 @@ mysql> SELECT * FROM tb_accesslog WHERE UNHEX(MD5(access_url))=UNHEX(MD5('http:/
 +-----------+-----------------+---------------------+
 |         1 | http://matt.com | 2020-08-23 16:49:01 |
 +-----------+-----------------+---------------------+
+
 
 mysql> EXPLAIN
        SELECT * FROM tb_accesslog
@@ -1216,7 +1219,7 @@ mysql> EXPLAIN
 +----+--------------+------+--------------+---------+-----+-------------+
 |  1 | tb_accesslog | ref  | ix_accessurl | 67      |   1 | Using where |
 +----+--------------+------+--------------+---------+-----+-------------+
-``` 
+```
 
 ### [13] 처리 대기(SLEEP)
 SLEEP() 함수는 프로그래밍 언어나 셸 스크립트 언어에서 제공하는 "sleep" 기능을 수행한다.
@@ -1224,7 +1227,7 @@ DBMS는 빠르게 쿼리를 처리하는 것을 항상 최선으로 생각하는
 하지만 SQL의 개발이나 디버깅 용도로 잠깐 대기하거나 일부러 쿼리의 실행을 오랜 시간 유지하고자 할 때 상당히 유용한 함수다.
 
 이 함수는 대기할 시간을 초 단위로 인자를 받으며, 특별히 어떠한 처리를 하거나 반환 값을 넘겨주지 않는다. 단지 지정한 시간만큼 대기할 뿐이다. 다음 쿼리를 직접 한번 실행해보자.
-다음에 설명하는 BENCHMARK() 함수와 더불어 이러한 디버깅이나 테스트 용도의 함수는 뜻밖에 중요한 역할을 할 때가 있기 때문에 이와 같은 함수가 있다는 것을 기억해 두는 것이 좋다.
+BENCHMARK() 함수와 더불어 이러한 디버깅이나 테스트 용도의 함수는 뜻밖에 중요한 역할을 할 때가 있기 때문에 이와 같은 함수가 있다는 것을 기억해 두는 것이 좋다.
 
 ```
 mysql> SELECT SLEEP(1.5)
@@ -1263,7 +1266,7 @@ mysql> SELECT BENCHMARK(10000000, (SELECT COUNT(*) FROM salaries));
 
 하지만 이렇게 SQL 문장이나 표현식의 성능을 BENCHMARK() 함수로 확인할 때는 주의할 사항이 있다.
 그것은 "SELECT BENCHMARK(10, expr)"와 "SELECT expr"을 10번 직접 실행하는 것과는 차이가 있다는 것이다.
-SQL 클라이어늩와 같은 도구로 "SELECT expr"을 10번 실행하는 경우에는 매번 쿼리의 파싱이나 최적화, 테이블 잠금이나 네트워크 비용 등이 소요된다.
+SQL 클라이언트와 같은 도구로 "SELECT expr"을 10번 실행하는 경우에는 매번 쿼리의 파싱이나 최적화, 테이블 잠금이나 네트워크 비용 등이 소요된다.
 하지만 "SELECT BENCHMARK(10, expr)"로 실행하는 경우에는 벤치마크 횟수에 관계없이 단 1번의 네트워크, 쿼리 파싱 및 최적화 비용이 소요된다는 점을 고려해야 한다.
 
 또한 "SELECT BENCHMARK(10, expr)"을 사용하면 한 번의 요청으로 expr 표현식이 10번 실행되는 것이므로 이미 할당받은 메모리 자원까지 공유되고, 메모리 할당도 "SELECT expr" 쿼리로 직접
@@ -1277,9 +1280,9 @@ BENCHMARK() 함수로 얻은 쿼리나 함수의 성능은 그 자체로는 큰 
 하지만 많은 DBMS에서 IP 주소를 저장하는 타입은 별도로 제공하지 않는다.
 
 MySQL에서는 INET_ATON() 함수와 INET_NTOA() 함수를 이용해 IPv4 주소를 문자열이 아닌 부호 없는 정수 타입에 저장할 수 있게 제공한다.
-INET_ATON() 함수는 문자열로 구성된 IPv4 주소를 정수형으로 변환하는 함수이며, INET_NTOA() 함수는 정수형의 IPv4 주소를 사람이 읽을 수 있는 형태의 '.'으로 구분된 문자열로 반환하는 함수다.
+INET_ATON() 함수는 문자열로 구성된 IPv4 주소를 정수형으로 변환하는 함수이며, INET_NTOA() 함수는 정수형의 IPv4 주소를 사람이 읽을 수 있는 형태의 '.'으로 구분된 문자열로 변환하는 함수다.
 
-INET6_ATON() 함수와 INET6_NTOA() 함수를 이용하면 IPv6 주소를 변환할 수 있다. INET6_ATON() 함수는 IPv6뿐만 아니라 IPv4 포맷의 IP 주소를 모두 BINARY 타입으로 변환할 수 있다.
+ITET6_ATON() 함수와 INET6_NTOA() 함수를 이용하면 IPv6 주소를 변환할 수 있다. INET6_ATON() 함수는 IPv6뿐만 아니라 IPv4 포맷의 IP 주소를 모두 BINARY 타입으로 변환할 수 있다.
 반대로 INET6_NTOA() 함수는 BINARY 타입의 IPv4 주소와 IPv6 주소를 모두 문자열로 변환할 수 있다.
 
 ```
@@ -1288,7 +1291,7 @@ mysql> SELECT HEX(INET6_ATON('fdfe::5a55:caff:fefa:9089'));
 | FDFE0000000000005A55CAFFFEFA9089             |
 +----------------------------------------------+
 
-mysql> SELEECT HEX(INET6_ATON('10.0.5.9'));
+mysql> SELECT HEX(INET_ATON('10.0.5.9'));
 +------------------------------+
 | 0A000509                     |
 +------------------------------+
@@ -1304,23 +1307,22 @@ mysql> SELECT INET6_NTOA(UNHEX('0A000509'));
 +-------------------------------+
 ```
 
-INET6_ATON()이나 INET6_NTOA() 함수를 이용해 변환된 IPv6이나 IPv4 주소를 저장하고자 한다면 바이너리 값을 저장할 수 있는 BINARY 또는 VARBINARY 타입을 사용해야 한다.
-IPv4를 위해서는 BINARY(4) 타입을, IPv6를 위해서는 BINARY(16) 타입을 사용해야 한다.
-IPv4와 IPv6를 모두 저장하고자 한다면 BINARY(16)보다는 VARBINARY(16) 타입을 사용할 것을 권장한다.
+INET6_ATON()이나 INET6_NTOA() 함수를 이용해 변환된 IPv6나 IPv4 주소를 저장하고자 한다면 바이너리 값을 저장할 수 있는 BINARY 또는 VARBINARY 타입을 사용해야 한다.
+IPv4를 위해서는 BINARY4) 타입을, IPv6를 위해서는 BINARY(16) 타입을 사용해야 한다. IPv4와 IPv6를 모두 저장하고자 한다면 BINARY(16)보다는 VARBINARY(16) 타입을 사용할 것을 권장한다.
 
-### [16] JSON 포맷(JSON_FORMAT)
+### [16] JSON 포맷(JSON_PRETTY)
 MySQL 클라이언트에서 JSON 데이터의 기본적인 표시 방법은 단순 텍스트 포맷인데, 이 포맷은 JSON 칼럼값에 대한 가독성이 떨어진다.
 하지만 JSON_PRETTY() 함수를 이용하면 JSON 칼럼의 값을 읽기 쉬운 포맷으로 변환해준다.
 
 ```
-mysql> SELECT doc FROM employees WHERE emp_no=10005;
+mysql> SELECT doc FROM employee_docs WHERE emp_no=10005;
 +-----------------------------------------------------------------+
 | doc                                                             |
 +-----------------------------------------------------------------+
 | {"emp_no": 10005, "gender": "M", "salaries": [{"salary": 9145...|
 +-----------------------------------------------------------------+
 
-mysql> SELECT JSON_PRETTY(doc) FROM employees WHERE emp_no=10005 \G
+mysql> SELECT JSON_PRETTY(doc) FROM employee_docs WHERE emp_no=10005 \G
 ************************** 1. row **************************
 JSON_PRETTY(doc): {
   "emp_no": 10005,
@@ -1414,10 +1416,10 @@ mysql> SELECT emp_no, doc->>"$.first_name" FROM employee_docs LIMIT 2;
 "->" 연산자는 JSON_EXTRACT() 함수와 동일한 기능이며, "->>" 연산자는 JSON_UNQUOTE() 함수와 JSON_EXTRACT() 함수를 조합한 것과 동일한 기능이다.
 
 ### [19] JSON 오브젝트 포함 여부 확인(JSON_CONTAINS)
-JSON 도큐먼트 또는 지정된 JSON 경로에 JSON 필드를 가지고 있는지 확인하는 함수다. 함수의 사용법은 간단히 다음 예제로 살펴보자.
+JSON 도큐먼트 또는 지정된 JSON 경로에 JSON 필드를 가지고 있는지를 확인하는 함수다. 함수의 사용법은 간단히 다음 예제로 살펴보자.
 
 ```
-mysql> SELECT emp_no FROM employee_docs
+mysql> SELECT emp_no FROm employee_docs
        WHERE JSON_CONTAINS(doc, '{"first_name":"Christian"}');
 +--------+
 | emp_no |
@@ -1425,8 +1427,8 @@ mysql> SELECT emp_no FROM employee_docs
 |  10004 |
 +--------+
 
-mysql> SELECT emp_no FROM employee_docs
-       WHERE JSON_CONTAINS(doc, '"Christian"', '&.first_name');
+mysql> SELECT emp_no FROM employees
+       WHERE JSON_CONTAINS(doc, '"Christian"', '$.first_name');
 +--------+
 | emp_no |
 +--------+
@@ -1439,7 +1441,7 @@ JSON_CONTAINS() 함수의 첫 번째 인자는 JSON 데이터를 저장하고 �
 세 번째 인자는 선택적으로 부여할 수 있는데, 세 번째 인자로 JSON 경로를 명시하면 해당 경로에 JSON 오브젝트가 존재하는지 여부를 체크한다.
 
 ### [20] JSON 오브젝트 생성(JSON_OBJECT)
-RDBMS 칼럼의 값을 이용해 JSON 오브젝트를 생성하는 함수다.
+RDBMS의 칼럼의 값을 이용해 JSON 오브젝트를 생성하는 함수다.
 
 ```
 mysql> SELECT
@@ -1488,7 +1490,7 @@ mysql> SELECT dept_no, JSON_ARRAYAGG(emp_no) as agg_manager
 ```
 
 JSON_OBJECTAGG() 함수는 2개의 인자가 필요한데, 첫 번째 인자는 키(Key)로, 두 번째 인자는 값(Value)으로 사용되어 키-밸류 쌍(Key-Value Pair)의 JSON 도큐먼트를 만들어 반환한다.
-JSON_ARRAYAGG() 함수는 하나의 인자를 필요로 하며, 주어진 RDBMS 칼럼의 값을 이용해 JSON 배열을 만들어서 반환한다.
+JSON_ARRAYAGG()는 하나의 인자를 필요로 하며, 주어진 RDBMS 칼럼의 값을 이용해 JSON 배열을 만들어서 반환한다.
 
 ### [22] JSON 데이터를 테이블로 변환(JSON_TABLE)
 JSON_TABLE() 함수는 JSON 데이터의 값들을 모아서 RDBMS 테이블을 만들어 반환한다.
@@ -1519,7 +1521,7 @@ mysql> EXPLAIN SELECT e2.emp_no, e2.first_name, e2.gender
                     JSON_TABLE(doc, "$" COLUMNS (emp_no INT PATH "$.emp_no",
                                                  gender CHAR(1) PATH "$.gender",
                                                  first_name VARCHAR(20) PATH "$.first_name")
-                              ) AS e2                                     
+                              ) AS e2
                WHERE e1.emp_no IN (10001, 10002);
 +----+-------------+-------+-------+---------+---------------------------------------------+
 | id | select_type | table | type  | key     | Extra                                       |
@@ -1528,8 +1530,7 @@ mysql> EXPLAIN SELECT e2.emp_no, e2.first_name, e2.gender
 |  1 | SIMPLE      | e2    | ALL   | NULL    | Table function: json_table; Using temporary |
 +----+-------------+-------+-------+---------+---------------------------------------------+
 ```
-<br/>
 
 > MySQL 5.6 버전부터 8.0 버전까지 업그레이드되면서 MySQL 서버의 JSON 관련 기능들은 상당히 많이 개선되고 보안됐다.
-> 여기서는 MySQL 서버에서 빈번하게 사용되는 JSON 함수 몇 개만 나열했으며, 전체 함수 목록과 더 자세한 내용은 [MySQL 서버의
-> 매뉴얼](https://dev.mysql.com/doc/refman/8.0/en/json-functions.html)을 참조하자.
+> 여기서는 MySQL 서버에서 빈번하게 사용되는 JSON 함수 몇 개만 나열했으며, 전체 함수 목록과 더 자세한 내용은 [MySQL 서버의 매뉴얼](https://dev.mysql.com/doc/refman/8.0/en/json-functions.html)을
+> 참조하자.
