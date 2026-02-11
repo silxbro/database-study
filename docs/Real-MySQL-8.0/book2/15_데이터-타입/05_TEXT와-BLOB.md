@@ -1,4 +1,4 @@
-<img width="1126" height="707" alt="스크린샷 2026-02-09 오후 12 15 05" src="https://github.com/user-attachments/assets/29b93c47-c545-4abb-9e8b-5459bd4d0dc2" /><img width="1126" height="707" alt="스크린샷 2026-02-09 오후 12 15 05" src="https://github.com/user-attachments/assets/34296b92-0918-4eba-afaa-985887ba5ea5" /><img width="1126" height="707" alt="스크린샷 2026-02-09 오후 12 15 05" src="https://github.com/user-attachments/assets/ce3c3c9b-97a9-4921-be9b-49833c804134" /># [CH 15-5] TEXT와 BLOB
+# [CH 15-5] TEXT와 BLOB
 
 MySQL에서 대량의 데이터를 저장하려면 TEXT나 BLOB 타입을 사용해야 하는데, 이 두 타입은 많은 부분에서 거의 똑같은 설정이나 방식으로 작동한다.
 TEXT 타입과 BLOB 타입의 유일한 차이점은 TEXT 타입은 문자열을 저장하는 대용량 칼럼이라서 문자 집합이나 콜레이션을 가진다는 것이고, BLOB 타입은 이진 데이터 타입이라서 별도의 문자 집합이나
