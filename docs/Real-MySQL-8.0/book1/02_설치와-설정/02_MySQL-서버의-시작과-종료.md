@@ -2,16 +2,16 @@
 
 이제 MySQL 서버의 설치 및 설정을 완료했으므로 MySQL 서버를 시작하고 종료하는 법, 그리고 mysql 클라이언트 프로그램을 이용해 간단한 접속 테스트를 해보자.
 macOS와 윈도우에 설치된 MySQL 서버의 경우 이미 설치 과정에서 설정 파일의 경로에 대해 살펴봤으며, MySQL 서버를 시작하거나 종료하는 것은 GUI로 쉽게 제어할 수 있을 것이다.
-여기서는 거의 대부분의 서비스 환경에서 사용되는 리눅스 운영체제에서 MySQL 서버의 설정 파일을 비롯해 MySQL 서버를 시작, 종료하는 방법을 살펴본다.
+여기서는 대부분의 서비스 환경에서 사용되는 리눅스 운영체제에서 MySQL 서버의 설정 파일을 비롯해 MySQL 서버를 시작, 종료하는 방법을 살펴보겠다.
 
 ---
 <br/>
 
 ## (1) 설정 파일 및 데이터 파일 준비
-리눅스 서버에서 Yum 인스톨러나 RPM을 이용해 MySQL 서버를 설치하면 MySQL 서버에 필요한 프로그램들과 디렉터리들은 일부 준비되지만 트랜잭션 로그 파일과 시스템 테이블이 준비되지 않았기 때문에 아직
-아직 MySQL 서버를 시작할 수 없다.
-우선 MySQL 서버가 설치되면 /etc/`my.cnf` 설정 파일이 준비되는데, 이 설정 파일에는 MySQL 서버를 실행하는 데 꼭 필요한 3\~4개의 아주 기본적인 설정만 기록돼 있다.
+리눅스 서버에서 Yum 인스톨러나 RPM을 이용해 MySQL 서버를 설치하면 MySQL에 필요한 프로그램과 디렉터리들은 일부 준비되지만 트랜잭션 로그 파일과 시스템 테이블이 준비되지 않기 때문에 아직 MySQL
+서버를 시작할 수 없다. 우선 MySQL 서버가 설치되면 /etc/my.cnf 설정 파일이 준비되는데, 이 설정 파일에는 MySQL 서버를 실행하는 데 꼭 필요한 3\~4개의 아주 기본적인 설정만 기록돼 있다.
 실제 서비스용으로 사용하기에는 많이 부족한 상태지만 간단히 테스트용으로 MySQL 서버를 실행한다면 이 정도로도 충분히 MySQL 서버를 실행할 수는 있다.
+만약 서비스용으로 MySQL 서버를 설치한다면 서버 설정의 내용을 충분히 숙지한 후 MySQL 설정 파일(/etc/my.cnf)을 준비하자.
 
 여기서는 MySQL 서버를 끝까지 설치해보는 것이 목적이므로 RPM 패키지가 준비해 둔 MySQL 설정 파일을 그대로 이용해 설치를 진행해보겠다.
 우선 다음과 같이 MySQL 서버를 실행하는 데 필요한 초기 데이터 파일(시스템 테이블이 저장되는 데이터 파일)과 트랜잭션 로그(리두 로그) 파일을 생성하자.
@@ -29,11 +29,11 @@ linux> mysqld --defaults-file=/etc/my.cnf --initialize-insecure
 linux> mysqld --defaults-file=/etc/my.cnf --initialize
 
 linux> tail -n 4 /var/log/mysqld.log
-2020-07-16T12:31:46.011759Z 0 [System] [MY-013169] /usr/sbin/mysqld (mysqld 8.0.21)
+2020-07-16T12:31:46.017728Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.0.21)
 initializing of server in progress as process 34346
 2020-07-16T12:31:46.017728Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
 2020-07-16T12:31:46.568716Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
-2020-07-16T12:31:47.493224Z 6 [Note] [MY-010454] [Server] A temporary password is generated for
+2020-07-16T12:31:46.493224Z 6 [Note] [MY-010454] [Server] A temporary password is generated for
 root@localhost: DqguE(h5o>lS
 ```
 <br/>
@@ -47,6 +47,7 @@ linux> systemctl start mysqld
 ```
 
 시작된 MySQL 서버의 상태는 다음과 같이 더 자세히 확인할 수 있다.
+
 ```
 linux> systemctl status mysqld
 ● mysqld.service - MySQL Server
@@ -57,20 +58,19 @@ linux> systemctl status mysqld
 Main PID: 3976 (mysqld)
   Status: "Server is operational"
   CGroup: /system.slice/mysqld.service
-              3976 /usr/sbin/mysqld
+           └─3976 /usr/sbin/mysqld
 ```
 
 > 앞의 예제와 같이 MySQL 서버는 systemd를 이용해 시작하고 종료할 수도 있지만 MySQL 배포판과 함께 제공되는 mysqld_safe 스크립트를 이용해서 MySQL 서버를 시작하고 종료할 수도 있다.
 > mysqld_safe 스크립트를 이용하면 MySQL 설정 파일(my.cnf)의 "[mysqld_safe]" 섹션의 설정들을 참조해서 MySQL 서버를 시작하게 되지만, 앞의 예제와 같이 systemd를 이용해서 MySQL
-> 서버를 시작하면 mysqld_safe 스크립트를 사용하지 않고 MySQL 서버를 시작하고 종료하게 된다.
-> 그래서 systemd를 이용하는 경우에는 MySQL 설정 파일의 "[mysqld_safe]" 섹션에만 설정 가능한 "malloc-lib" 같은 시스템 설정을 적용하고자 한다면 mysqld_safe 스크립트를 이용해 MySQL
-> 서버를 시작해야 한다.
+> 서버를 시작하면 mysqld_safe 스크립트를 사용하지 않고 MySQL 서버를 시작하고 종료하게 된다. 그래서 systemd를 이용하는 경우에는 MySQL 설정 파일의 "[mysqld_safe]" 섹션을 무시하게 된다.
+> 만약 MySQL 서버의 설정 파일에 "[mysqld_safe]" 섹션에만 설정 가능한 "malloc-lib" 같은 시스템 설정을 적용하고자 한다면 mysqld_safe 스크립트를 이용해 MySQL 서버를 시작해야 한다.
 >
 > 물론 systemd를 이용해 MySQL 서버를 시작하는 경우에도 메모리 할당자(Memory allocator)를 변경하고자 한다면 "LD_PRELOAD" 환경변수를 이용해서 MySQL 서버를 시작할 수도 있다.
 
 ```
 linux> ps -ef | grep mysqld
-mysql    3976      1  9  5월17 ?    5-08:10:40 /usr/sbin/mysqld
+mysql    3976      1     5월17 ?      5-08:10:40 /usr/sbin/mysqld
 ```
 
 실행 중인 MySQL 서버를 종료하려면 시작과 동일하게 systemctl을 이용하되, 옵션을 stop으로 변경해서 실행하면 된다.
@@ -86,24 +86,24 @@ linux> systemctl stop mysqld
 mysql> SHUTDOWN;
 ```
 
-MySQL 서버에서는 실제 트랜잭션이 정상적으로 커밋돼도 데이터 파일에 변경된 내용이 기록되지 않고 로그 파일(리두 로그)에만 기록돼 있을 수 있다.
+MySQL 서버에서는 실제 트랜잭션이 정상적으로 커밋돼도 데이터 파일에 변경된 내용이 기록되지 않고 리두 파일(리두 로그)에만 기록돼 있을 수 있다.
 심지어 MySQL 서버가 종료되고 다시 시작된 이후에도 계속 이 상태로 남아있을 수도 있다. 사용량이 많은 MySQL 서버에서는 이런 현상이 더 일반적인데, 이는 결코 비정상적인 상황이 아니다.
 하지만 MySQL 서버가 종료될 때 모든 커밋된 내용을 데이터 파일에 기록하고 종료하게 할 수도 있는데, 이 경우에는 다음과 같이 MySQL 서버의 옵션을 변경하고 MySQL 서버를 종료하면 된다.
 
 ```
 mysql> SET GLOBAL innodb_fast_shutdown=0;
-linux> systemctl stop mysqld.service
+linux> systemctl stop mysqld.service;
 
 ## 또는 원격으로 MySQL 서버 종료 시
 mysql> SET GLOBAL innodb_fast_shutdown=0;
 mysql> SHUTDOWN;
 ```
 
-이렇게 모든 커밋된 데이터를 데이터 파일에 적용하고 종료하는 것을 클린 셧다운(Clean shutdown)이라고 표현한다.
+이렇게 모든 커밋된 데이터를 데이터 파일에 적용하고 종료하는 것을 클린 셧다운(Clean Shutdown)이라고 표현한다.
 클린 셧다운으로 종료되면 다시 MySQL 서버가 기동할 때 별도의 트랜잭션 복구 과정을 진행하지 않기 때문에 빠르게 시작할 수 있다.
 
 > MySQL 서버가 시작되거나 종료될 때는 MySQL 서버(InnoDB 스토리지 엔진)의 버퍼 풀 내용을 백업하고 복구하는 과정이 내부적으로 실행된다.
-> 실제 버퍼 풀의 내용을 백업하는 것이 아니라, 버퍼 풀에 적재돼 있던 데이터 파일의 데이터 페이지에 대한 메타 정보를 백업하기 때문에 용량이 크지 않으며, 백업 자체는 매우 빠르게 완료된다.
+> 실제 버퍼 풀의 내용을 백업하는 것이 아니라, 버퍼 풀에 적재돼 있던 데이터 파일의 데이터 페이지에 대한 메타 정보를 백업하기 떄문에 용량이 크지 않으며, 백업 자체는 매우 빠르게 완료된다.
 > 하지만 MySQL 서버가 새로 시작될 때는 디스크에서 데이터 파일들을 모두 읽어서 적재해야 하므로 상당한 시간이 걸릴 수도 있다.
 > 혹시 MySQL 서버의 시작 시간이 오래 걸린다면 MySQL 서버가 버퍼 풀의 내용을 복구하고 있는지 확인해보는 것이 좋다.
 <br/>
@@ -125,9 +125,9 @@ MySQL 서버에 접속할 때는 호스트를 localhost로 명시하는 것과 1
 아니라 유닉스의 프로세스 간 통신(IPC; Inter Process Communication)의 일종이다.
 하지만 127.0.0.1을 사용하는 경우에는 자기 서버를 가리키는 루프백(loopback) IP이기는 하지만 TCP/IP 통신 방식을 사용하는 것이다.
 
-세 번째 방식은 별도로 호스트 주소와 포트를 명사하지 않는다.
+세 번째 방식은 별도로 호스트 주소와 포트를 명시하지 않는다.
 이 경우에는 기본값으로 호스트는 localhost가 되며 소켓 파일을 사용하게 되는데, 소켓 파일의 위치는 MySQL 서버의 설정 파일에서 읽어서 사용한다.
-MySQL 서버가 기동될 때 만들어지는 유닉스 소켓 파일은 MySQL 서버를 재시작하지 않으면 다시 만들어 낼 수 없기 때문에 실수로 삭제하지 않도록 주의한다.
+MySQL 서버가 기동될 때 만들어지는 유닉스 소켓 파일은 MySQL 서버를 재시작하지 않으면 다시 만들어낼 수 없기 때문에 실수로 삭제하지 않도록 주의한다.
 유닉스나 리눅스에서 mysql 클라이언트 프로그램을 실행하는 경우에는 mysql 프로그램의 경로를 PATH 환경변수에 등록해 둔다.
 
 MySQL 서버에 접속했다면 SHOW DATABASES 명령으로 데이터베이스의 목록을 확인할 수 있다.
@@ -138,10 +138,10 @@ MySQL 서버에 접속했다면 SHOW DATABASES 명령으로 데이터베이스�
 linux> mysql -h127.0.0.1 -uroot -p
 mysql: [Warning] Using a password on the command line interface can be insecure.
 Welcome to the MySQL monitor.  Commands end with ; or \g.
-Your MySQL connection id is 44
-Server version: 8.0.43-0ubuntu0.24.04.1 (Ubuntu)
+Your MysQL connection id is 9
+Server version: 8.0.21 MySQL Community Server -GPL
 
-Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
 
 Oracle is a registered trademark of Oracle Corporation and/or its
 affiliates. Other names may be trademarks of their respective
